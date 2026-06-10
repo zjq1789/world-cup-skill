@@ -1,50 +1,107 @@
 <svg width="1600" height="520" viewBox="0 0 1600 520" fill="none" xmlns="http://www.w3.org/2000/svg">
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="1600" y2="520" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#053B1A"/>
-      <stop offset="0.48" stop-color="#0A7A37"/>
-      <stop offset="1" stop-color="#A7F23C"/>
+      <stop offset="0" stop-color="#042B14"/>
+      <stop offset="0.42" stop-color="#087634"/>
+      <stop offset="1" stop-color="#9CF037"/>
     </linearGradient>
-    <radialGradient id="glow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(800 245) rotate(90) scale(280 560)">
-      <stop offset="0" stop-color="#FFFFFF" stop-opacity="0.24"/>
+    <radialGradient id="centerGlow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(800 245) rotate(90) scale(330 610)">
+      <stop offset="0" stop-color="#FFFFFF" stop-opacity="0.26"/>
       <stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/>
     </radialGradient>
-    <filter id="shadow" x="-25%" y="-35%" width="150%" height="170%">
-      <feDropShadow dx="0" dy="18" stdDeviation="16" flood-color="#00180A" flood-opacity="0.38"/>
+    <radialGradient id="ballLight" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(115 105) rotate(48) scale(150)">
+      <stop offset="0" stop-color="#FFFFFF"/>
+      <stop offset="0.72" stop-color="#F3F6F0"/>
+      <stop offset="1" stop-color="#DCE5DA"/>
+    </radialGradient>
+    <filter id="titleShadow" x="-25%" y="-35%" width="150%" height="170%">
+      <feDropShadow dx="0" dy="18" stdDeviation="16" flood-color="#00180A" flood-opacity="0.45"/>
     </filter>
     <filter id="ballShadow" x="-40%" y="-40%" width="180%" height="180%">
-      <feDropShadow dx="0" dy="8" stdDeviation="8" flood-color="#00180A" flood-opacity="0.32"/>
+      <feDropShadow dx="0" dy="14" stdDeviation="14" flood-color="#00180A" flood-opacity="0.36"/>
     </filter>
+    <filter id="lightBlur" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="12"/>
+    </filter>
+    <clipPath id="ballClip">
+      <circle cx="150" cy="150" r="108"/>
+    </clipPath>
   </defs>
 
   <rect width="1600" height="520" rx="34" fill="url(#bg)"/>
-  <rect width="1600" height="520" rx="34" fill="url(#glow)"/>
+  <rect width="1600" height="520" rx="34" fill="url(#centerGlow)"/>
 
-  <g opacity="0.2" stroke="#FFFFFF" stroke-width="4">
-    <rect x="56" y="50" width="1488" height="420" rx="22"/>
+  <!-- stadium lights -->
+  <g opacity="0.32">
+    <polygon points="110,36 350,210 330,235 78,70" fill="#FFFFFF" opacity="0.16" filter="url(#lightBlur)"/>
+    <polygon points="1490,36 1250,210 1270,235 1522,70" fill="#FFFFFF" opacity="0.16" filter="url(#lightBlur)"/>
+    <g fill="#E9FFE4">
+      <circle cx="98" cy="42" r="7"/><circle cx="122" cy="42" r="7"/><circle cx="146" cy="42" r="7"/>
+      <circle cx="1454" cy="42" r="7"/><circle cx="1478" cy="42" r="7"/><circle cx="1502" cy="42" r="7"/>
+    </g>
+  </g>
+
+  <!-- pitch lines -->
+  <g opacity="0.22" stroke="#FFFFFF" stroke-width="4">
+    <rect x="54" y="50" width="1492" height="420" rx="22"/>
     <line x1="800" y1="50" x2="800" y2="470"/>
     <circle cx="800" cy="260" r="108"/>
     <circle cx="800" cy="260" r="7" fill="#FFFFFF" stroke="none"/>
-    <rect x="56" y="145" width="190" height="230"/>
-    <rect x="1354" y="145" width="190" height="230"/>
+    <rect x="54" y="145" width="190" height="230"/>
+    <rect x="1356" y="145" width="190" height="230"/>
+    <rect x="54" y="206" width="82" height="108"/>
+    <rect x="1464" y="206" width="82" height="108"/>
   </g>
 
-  <g filter="url(#shadow)">
-    <text x="800" y="288" text-anchor="middle" font-size="160" font-weight="900" font-family="PingFang SC, Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" fill="#FFFFFF" letter-spacing="16">世界杯</text>
+  <!-- audience dots and confetti -->
+  <g opacity="0.28">
+    <circle cx="310" cy="96" r="4" fill="#E8FFD9"/><circle cx="354" cy="118" r="3" fill="#D6FF77"/>
+    <circle cx="1214" cy="92" r="4" fill="#E8FFD9"/><circle cx="1278" cy="132" r="3" fill="#D6FF77"/>
+    <circle cx="520" cy="424" r="3" fill="#E8FFD9"/><circle cx="1090" cy="410" r="4" fill="#D6FF77"/>
+    <rect x="438" y="92" width="9" height="24" rx="4" fill="#E8FFD9" transform="rotate(22 438 92)"/>
+    <rect x="1160" y="388" width="9" height="24" rx="4" fill="#E8FFD9" transform="rotate(-28 1160 388)"/>
+    <rect x="1016" y="84" width="8" height="20" rx="4" fill="#D6FF77" transform="rotate(38 1016 84)"/>
+    <rect x="592" y="402" width="8" height="20" rx="4" fill="#D6FF77" transform="rotate(-35 592 402)"/>
   </g>
 
-  <g transform="translate(1078 170) scale(0.46)" filter="url(#ballShadow)">
-    <circle cx="150" cy="150" r="122" fill="#FAFAF6"/>
-    <circle cx="150" cy="150" r="122" stroke="#07381A" stroke-width="8"/>
-    <polygon points="150,75 196,110 178,164 122,164 104,110" fill="#101827"/>
-    <polygon points="78,132 122,164 106,218 54,218 38,166" fill="#101827"/>
-    <polygon points="222,132 262,166 246,218 194,218 178,164" fill="#101827"/>
-    <polygon points="116,236 184,236 202,282 98,282" fill="#101827"/>
-    <line x1="104" y1="110" x2="38" y2="166" stroke="#101827" stroke-width="8"/>
-    <line x1="196" y1="110" x2="262" y2="166" stroke="#101827" stroke-width="8"/>
-    <line x1="122" y1="164" x2="78" y2="132" stroke="#101827" stroke-width="6"/>
-    <line x1="178" y1="164" x2="222" y2="132" stroke="#101827" stroke-width="6"/>
-    <line x1="122" y1="164" x2="116" y2="236" stroke="#101827" stroke-width="6"/>
-    <line x1="178" y1="164" x2="184" y2="236" stroke="#101827" stroke-width="6"/>
+  <!-- subtle cup outline -->
+  <g opacity="0.16" stroke="#FFFFFF" stroke-width="7" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M690 380h220"/>
+    <path d="M735 380c30-35 36-78 36-118h58c0 40 6 83 36 118"/>
+    <path d="M755 168h90v86c0 40-20 70-45 70s-45-30-45-70v-86z"/>
+    <path d="M755 190h-54c0 54 25 82 61 88"/>
+    <path d="M845 190h54c0 54-25 82-61 88"/>
+  </g>
+
+  <!-- centered title -->
+  <g filter="url(#titleShadow)">
+    <text x="800" y="290" text-anchor="middle" font-size="164" font-weight="900" font-family="PingFang SC, Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" fill="#FFFFFF" letter-spacing="18">世界杯</text>
+  </g>
+
+  <!-- classic soccer ball, smaller and more accurate -->
+  <g transform="translate(1068 165) scale(0.58)" filter="url(#ballShadow)">
+    <circle cx="150" cy="150" r="112" fill="url(#ballLight)"/>
+    <g clip-path="url(#ballClip)">
+      <path d="M150 42 L188 72 L174 116 L126 116 L112 72 Z" fill="#101827"/>
+      <path d="M72 92 L112 72 L126 116 L100 154 L55 145 Z" fill="#101827"/>
+      <path d="M228 92 L188 72 L174 116 L200 154 L245 145 Z" fill="#101827"/>
+      <path d="M86 220 L100 154 L134 174 L136 225 L108 254 Z" fill="#101827"/>
+      <path d="M214 220 L200 154 L166 174 L164 225 L192 254 Z" fill="#101827"/>
+      <path d="M150 126 L196 160 L178 214 L122 214 L104 160 Z" fill="#101827"/>
+      <g stroke="#101827" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.9">
+        <path d="M150 42 L112 72 L72 92"/>
+        <path d="M150 42 L188 72 L228 92"/>
+        <path d="M126 116 L104 160 L100 154"/>
+        <path d="M174 116 L196 160 L200 154"/>
+        <path d="M104 160 L86 220"/>
+        <path d="M196 160 L214 220"/>
+        <path d="M122 214 L108 254"/>
+        <path d="M178 214 L192 254"/>
+        <path d="M55 145 C36 160 30 184 38 210"/>
+        <path d="M245 145 C264 160 270 184 262 210"/>
+      </g>
+    </g>
+    <circle cx="150" cy="150" r="112" stroke="#07381A" stroke-width="8"/>
+    <path d="M82 76 C118 42 180 36 220 72" stroke="#FFFFFF" stroke-width="10" stroke-linecap="round" opacity="0.22"/>
   </g>
 </svg>
