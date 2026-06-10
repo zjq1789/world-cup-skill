@@ -110,7 +110,26 @@ Use an ensemble-style reasoning process:
 4. Use a Poisson-style score distribution to derive scoreline, win/draw/loss, over-under, and both-teams-to-score probabilities.
 5. For knockout matches, separately consider regular-time score and qualification probability.
 6. Calibrate against market signal if available, while retaining independent reasoning.
-7. Select one scoreline that best balances probability, match context, and model direction.
+7. Select one scoreline that best balances probability, expected total goals, expected margin, match context, and model direction.
+
+## Scoreline calibration rules
+
+Do not mechanically choose the single highest Poisson cell. In football, 1-0, 1-1, and 0-1 are often the highest individual cells even when the better representative prediction should be 2-0, 2-1, 1-2, 2-2, 3-1, or 0-2.
+
+Before outputting the final score, run this sanity check:
+
+1. Estimate total expected goals. Use market over-under/xG if available; otherwise use a realistic World Cup prior and adjust by team style:
+   - defensive knockout match: about 2.0-2.4 total goals
+   - normal balanced match: about 2.3-2.8 total goals
+   - open group match or clear mismatch: about 2.7-3.4 total goals
+2. Estimate each team's expected goals. Strong favorites may reasonably project 1.8-2.8 goals; weak underdogs may project 0.4-1.1; balanced open games often project 1.1-1.7 each.
+3. Compare the chosen score with expected total goals. If expected total goals are above 2.7, avoid defaulting to 1-0/1-1/0-1 unless there is strong evidence for a low-tempo match.
+4. Compare the chosen score with expected margin. If one side is clearly stronger and has a high attack edge, consider 2-0, 2-1, 3-0, or 3-1 instead of automatically choosing 1-0.
+5. Respect both-teams-to-score. If BTTS is above 55%, avoid 1-0 or 0-1 unless the clean-sheet evidence is strong.
+6. Respect over-under. If over 2.5 is above 52%, allow 2-1, 1-2, 2-2, 3-0, 3-1, or 1-3 to win the final score selection.
+7. Batch prediction guardrail: when predicting many matches, if most outputs are only 0/1 goal scores, recalibrate upward and diversify based on each match's expected goals, mismatch, and tempo. Do not let the table collapse into repeated 1-0, 1-1, 0-1 patterns.
+
+Use 1-0, 1-1, or 0-1 only when the data actually supports a low-scoring game: low xG trend, strong defenses, poor finishing, conservative tactical matchup, knockout risk aversion, key attacking injuries, or under 2.5 clearly favored.
 
 ## Output rules
 
