@@ -1,0 +1,5 @@
+interface:
+  display_name: World Cup Skill
+  short_description: Predict FIFA World Cup scores with latest data and historical result tracking.
+  icon: ⚽
+  brand_color: "#0A7A37"
