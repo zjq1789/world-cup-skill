@@ -1,6 +1,6 @@
 ---
 name: world-cup-skill
-description: professional fifa world cup prediction skill for chatgpt. use when the user asks to predict world cup matches from text, screenshots, csv, or excel data; determine whether matches are finished; fetch latest online data before predictions; combine historical data, team strength, player status, xg, odds, schedule, environment, and tournament context; output one main predicted score plus concise reference probabilities for win/draw/loss, over-under, both teams to score, qualification, and upset risk; save historical predictions and real results when files are provided.
+description: professional fifa world cup prediction skill for chatgpt. use when the user asks to predict world cup matches from text, screenshots, csv, or excel data; determine whether matches are finished; fetch latest online data before predictions; compare multiple reliable external forecasts, odds, xg, team strength, player status, historical data, and tournament context; output one weighted-consensus predicted score plus concise reference probabilities for win/draw/loss, over-under, both teams to score, qualification, and upset risk; save historical predictions and real results when files are provided.
 ---
 
 # World Cup Skill
@@ -14,7 +14,7 @@ Use this skill only for FIFA World Cup match prediction, schedule recognition, r
 3. Before predicting, verify match status using the latest online information.
 4. If the match is finished, do not predict. Report the real score and offer a short review or result update.
 5. If the match is live, state that it is no longer a pre-match prediction and only provide live-context analysis if requested.
-6. If the match is not started, fetch latest data and predict.
+6. If the match is not started, fetch latest data, collect external predictions, and produce one weighted-consensus score.
 7. Default to one main scoreline only. Do not provide a long list of possible scores unless requested.
 
 ## Required latest data checks
@@ -24,7 +24,7 @@ Before every prediction, search for or verify:
 - official schedule, kickoff time, venue, match status, and stage
 - expected or confirmed lineups
 - injuries, suspensions, illness, and availability risks
-- captain, goalkeeper, striker, defensive leader, and playmaker status
+- captain, goalkeeper, striker, defensive leader, playmaker, and penalty-taker status
 - recent form, goals, xG, xGA, shots, shots on target, and chance quality
 - defensive stability, pressing, transitions, set pieces, and goalkeeper saves
 - FIFA rank, Elo, previous World Cup performance, and tournament pedigree
@@ -34,6 +34,64 @@ Before every prediction, search for or verify:
 - late news that may materially change the prediction
 
 If data is missing, briefly mark it as a data gap.
+
+## External forecast collection
+
+Do not rely only on the model's own Poisson output. For every real prediction, collect multiple independent public forecasts when available.
+
+Prefer at least 5 sources. If fewer are available, use what can be verified and state the gap. Do not invent sources or scores.
+
+Prioritize these source types:
+
+1. Quantitative football analytics forecasts: model-based score/probability predictions from reputable analytics providers.
+2. Market consensus: odds or odds aggregators converted into implied win/draw/loss and over-under probabilities.
+3. xG/Elo/statistical models: team strength, expected goals, recent performance, and matchup-based model outputs.
+4. Reputable media or expert prediction desks: only use clear predicted scorelines or clearly stated probability views.
+5. User-uploaded CSV/Excel history: past predictions, real results, and team features for local calibration.
+
+For each source, record:
+
+- source name and date
+- source type
+- predicted score if available
+- win/draw/loss probabilities if available
+- over-under or total-goal signal if available
+- xG or expected-goal signal if available
+- injuries/lineup assumptions if stated
+- confidence or quality note
+
+Discard low-quality SEO pages, uncited prediction spam, stale pages, or sources that do not clearly identify the match.
+
+## Weighted consensus method
+
+The final score must be a weighted consensus, not a manually restricted score.
+
+Default source weights:
+
+- quantitative analytics model: 30%
+- market consensus / odds-implied probabilities: 25%
+- xG/Elo/internal statistical model: 20%
+- reputable media/expert score predictions: 15%
+- user-uploaded historical calibration data: 10%
+
+If a category is missing, redistribute its weight proportionally across available reliable categories. Increase weight for newer, transparent, match-specific sources. Decrease weight for stale, vague, or non-quantified sources.
+
+Consensus steps:
+
+1. Normalize source weights so total weight equals 1.
+2. Convert score predictions into weighted expected goals and weighted scoreline votes.
+3. Convert odds and probability forecasts into weighted win/draw/loss, over-under, BTTS, and qualification probabilities.
+4. Use local xG/Elo/Poisson only as one source inside the ensemble, not as the sole decision-maker.
+5. Generate candidate scorelines from external score predictions plus the internal model's likely scorelines.
+6. Select the one scoreline with the best combined support across:
+   - exact source scoreline support
+   - closeness to weighted expected goals
+   - agreement with weighted win/draw/loss direction
+   - agreement with weighted over-under and BTTS signals
+   - current lineup, injury, and tactical context
+7. If the consensus is weak or sources conflict, still output one score, but lower confidence and explain the conflict briefly.
+
+Do not add artificial rules such as forcing or banning specific low/high scores. A 1-0, 1-1, 0-1, 3-0, or 2-2 score is acceptable only if the weighted evidence supports it.
 
 ## Prediction factors to consider
 
@@ -96,40 +154,10 @@ Consider as many useful factors as the data allows:
 
 - win/draw/loss odds
 - over-under odds
-- movement in market expectations
-- overreaction or public bias risk
+- market movement
+- market-vs-model disagreement
+- public bias or overreaction risk
 - use only as calibration, not as betting advice
-
-## Prediction method
-
-Use an ensemble-style reasoning process:
-
-1. Establish baseline strength using Elo/ranking/form.
-2. Estimate expected goals for both teams using attack and defense strength.
-3. Adjust expected goals using xG trend, lineup, injuries, fatigue, stage, and tactical matchup.
-4. Use a Poisson-style score distribution to derive scoreline, win/draw/loss, over-under, and both-teams-to-score probabilities.
-5. For knockout matches, separately consider regular-time score and qualification probability.
-6. Calibrate against market signal if available, while retaining independent reasoning.
-7. Select one scoreline that best balances probability, expected total goals, expected margin, match context, and model direction.
-
-## Scoreline calibration rules
-
-Do not mechanically choose the single highest Poisson cell. In football, 1-0, 1-1, and 0-1 are often the highest individual cells even when the better representative prediction should be 2-0, 2-1, 1-2, 2-2, 3-1, or 0-2.
-
-Before outputting the final score, run this sanity check:
-
-1. Estimate total expected goals. Use market over-under/xG if available; otherwise use a realistic World Cup prior and adjust by team style:
-   - defensive knockout match: about 2.0-2.4 total goals
-   - normal balanced match: about 2.3-2.8 total goals
-   - open group match or clear mismatch: about 2.7-3.4 total goals
-2. Estimate each team's expected goals. Strong favorites may reasonably project 1.8-2.8 goals; weak underdogs may project 0.4-1.1; balanced open games often project 1.1-1.7 each.
-3. Compare the chosen score with expected total goals. If expected total goals are above 2.7, avoid defaulting to 1-0/1-1/0-1 unless there is strong evidence for a low-tempo match.
-4. Compare the chosen score with expected margin. If one side is clearly stronger and has a high attack edge, consider 2-0, 2-1, 3-0, or 3-1 instead of automatically choosing 1-0.
-5. Respect both-teams-to-score. If BTTS is above 55%, avoid 1-0 or 0-1 unless the clean-sheet evidence is strong.
-6. Respect over-under. If over 2.5 is above 52%, allow 2-1, 1-2, 2-2, 3-0, 3-1, or 1-3 to win the final score selection.
-7. Batch prediction guardrail: when predicting many matches, if most outputs are only 0/1 goal scores, recalibrate upward and diversify based on each match's expected goals, mismatch, and tempo. Do not let the table collapse into repeated 1-0, 1-1, 0-1 patterns.
-
-Use 1-0, 1-1, or 0-1 only when the data actually supports a low-scoring game: low xG trend, strong defenses, poor finishing, conservative tactical matchup, knockout risk aversion, key attacking injuries, or under 2.5 clearly favored.
 
 ## Output rules
 
@@ -149,8 +177,8 @@ Default output format:
 - 晋级概率：Team A xx% / Team B xx%
 - 爆冷概率：xx%
 
-简要依据：
-...
+加权依据：
+综合了 xx 个可靠来源：量化模型、市场概率、xG/Elo、媒体预测、用户历史数据。主要分歧是 ...
 
 主要风险：
 ... 本预测是数据分析，不是投注建议。
