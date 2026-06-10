@@ -1,48 +1,56 @@
 <svg width="1600" height="520" viewBox="0 0 1600 520" fill="none" xmlns="http://www.w3.org/2000/svg">
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="1600" y2="520" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#063B1E"/>
-      <stop offset="0.48" stop-color="#0A7A37"/>
-      <stop offset="1" stop-color="#B8F241"/>
+      <stop offset="0" stop-color="#052E16"/>
+      <stop offset="0.5" stop-color="#0A7A37"/>
+      <stop offset="1" stop-color="#75C947"/>
     </linearGradient>
-    <radialGradient id="glow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(1220 250) rotate(90) scale(260)">
-      <stop stop-color="#FFFFFF" stop-opacity="0.7"/>
+    <radialGradient id="centerGlow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(800 245) rotate(90) scale(310 520)">
+      <stop offset="0" stop-color="#FFFFFF" stop-opacity="0.22"/>
       <stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/>
     </radialGradient>
-    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
-      <feDropShadow dx="0" dy="18" stdDeviation="18" flood-color="#00170A" flood-opacity="0.38"/>
+    <filter id="titleShadow" x="-20%" y="-40%" width="140%" height="180%">
+      <feDropShadow dx="0" dy="16" stdDeviation="14" flood-color="#00190B" flood-opacity="0.42"/>
+    </filter>
+    <filter id="softShadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="10" stdDeviation="10" flood-color="#00190B" flood-opacity="0.32"/>
     </filter>
   </defs>
 
-  <rect width="1600" height="520" rx="34" fill="url(#bg)"/>
-  <rect width="1600" height="520" rx="34" fill="url(#glow)"/>
+  <rect width="1600" height="520" rx="36" fill="url(#bg)"/>
+  <rect width="1600" height="520" rx="36" fill="url(#centerGlow)"/>
 
-  <g opacity="0.26" stroke="#FFFFFF" stroke-width="4">
-    <line x1="0" y1="86" x2="1600" y2="86"/>
-    <line x1="0" y1="434" x2="1600" y2="434"/>
-    <line x1="800" y1="0" x2="800" y2="520"/>
-    <circle cx="800" cy="260" r="112"/>
-    <rect x="0" y="128" width="210" height="264" rx="0"/>
-    <rect x="1390" y="128" width="210" height="264" rx="0"/>
+  <!-- pitch lines -->
+  <g opacity="0.22" stroke="#FFFFFF" stroke-width="4">
+    <rect x="48" y="48" width="1504" height="424" rx="24"/>
+    <line x1="800" y1="48" x2="800" y2="472"/>
+    <circle cx="800" cy="260" r="102"/>
+    <circle cx="800" cy="260" r="8" fill="#FFFFFF" stroke="none"/>
+    <rect x="48" y="145" width="190" height="230"/>
+    <rect x="1362" y="145" width="190" height="230"/>
+    <rect x="48" y="205" width="82" height="110"/>
+    <rect x="1470" y="205" width="82" height="110"/>
   </g>
 
-  <g filter="url(#shadow)">
-    <text x="190" y="318" font-size="132" font-weight="900" font-family="PingFang SC, Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" fill="#FFFFFF" letter-spacing="12">世界杯</text>
-    <text x="198" y="370" font-size="34" font-weight="600" font-family="Arial, sans-serif" fill="#DDFED7" letter-spacing="4">WORLD CUP PREDICTION SKILL</text>
+  <!-- small football -->
+  <g transform="translate(1038 172) scale(0.62)" filter="url(#softShadow)">
+    <circle cx="150" cy="150" r="118" fill="#F9FAF7"/>
+    <circle cx="150" cy="150" r="118" stroke="#0B3B21" stroke-width="7"/>
+    <polygon points="150,82 190,112 175,160 125,160 110,112" fill="#111827"/>
+    <polygon points="84,132 125,160 110,210 62,210 48,164" fill="#111827"/>
+    <polygon points="216,132 252,164 238,210 190,210 175,160" fill="#111827"/>
+    <polygon points="120,232 180,232 194,270 106,270" fill="#111827"/>
+    <line x1="110" y1="112" x2="48" y2="164" stroke="#111827" stroke-width="8"/>
+    <line x1="190" y1="112" x2="252" y2="164" stroke="#111827" stroke-width="8"/>
+    <line x1="125" y1="160" x2="84" y2="132" stroke="#111827" stroke-width="6"/>
+    <line x1="175" y1="160" x2="216" y2="132" stroke="#111827" stroke-width="6"/>
+    <line x1="125" y1="160" x2="120" y2="232" stroke="#111827" stroke-width="6"/>
+    <line x1="175" y1="160" x2="180" y2="232" stroke="#111827" stroke-width="6"/>
   </g>
 
-  <g transform="translate(1115 118)" filter="url(#shadow)">
-    <circle cx="150" cy="150" r="138" fill="#F8FAF7"/>
-    <circle cx="150" cy="150" r="138" stroke="#0B3B21" stroke-width="8"/>
-    <polygon points="150,72 198,108 180,166 120,166 102,108" fill="#111827"/>
-    <polygon points="74,132 120,166 102,220 48,220 34,166" fill="#111827"/>
-    <polygon points="226,132 266,166 252,220 198,220 180,166" fill="#111827"/>
-    <polygon points="118,244 180,244 198,286 102,286" fill="#111827"/>
-    <line x1="102" y1="108" x2="34" y2="166" stroke="#111827" stroke-width="10"/>
-    <line x1="198" y1="108" x2="266" y2="166" stroke="#111827" stroke-width="10"/>
-    <line x1="120" y1="166" x2="74" y2="132" stroke="#111827" stroke-width="8"/>
-    <line x1="180" y1="166" x2="226" y2="132" stroke="#111827" stroke-width="8"/>
-    <line x1="120" y1="166" x2="118" y2="244" stroke="#111827" stroke-width="8"/>
-    <line x1="180" y1="166" x2="180" y2="244" stroke="#111827" stroke-width="8"/>
+  <!-- centered title -->
+  <g filter="url(#titleShadow)">
+    <text x="800" y="298" text-anchor="middle" font-size="156" font-weight="900" font-family="PingFang SC, Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" fill="#FFFFFF" letter-spacing="14">世界杯</text>
+    <text x="800" y="360" text-anchor="middle" font-size="34" font-weight="700" font-family="Arial, sans-serif" fill="#E6FFE0" letter-spacing="5">WORLD CUP PREDICTION SKILL</text>
   </g>
 </svg>
