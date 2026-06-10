@@ -1,0 +1,2 @@
+match_id,tournament,stage,match_date,team_a,team_b,score_a,score_b,aet,penalties,xg_a,xg_b,red_cards_a,red_cards_b,notes
+wc2026-002,FIFA World Cup 2026,Group,2026-06-15,Brazil,Germany,1,1,false,false,1.4,1.2,0,0,finished match example
