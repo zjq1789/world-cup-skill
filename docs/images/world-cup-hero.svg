@@ -9,30 +9,19 @@
       <stop offset="0" stop-color="#FFFFFF" stop-opacity="0.26"/>
       <stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/>
     </radialGradient>
-    <radialGradient id="ballLight" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(115 105) rotate(48) scale(150)">
-      <stop offset="0" stop-color="#FFFFFF"/>
-      <stop offset="0.72" stop-color="#F3F6F0"/>
-      <stop offset="1" stop-color="#DCE5DA"/>
-    </radialGradient>
     <filter id="titleShadow" x="-25%" y="-35%" width="150%" height="170%">
       <feDropShadow dx="0" dy="18" stdDeviation="16" flood-color="#00180A" flood-opacity="0.45"/>
-    </filter>
-    <filter id="ballShadow" x="-40%" y="-40%" width="180%" height="180%">
-      <feDropShadow dx="0" dy="14" stdDeviation="14" flood-color="#00180A" flood-opacity="0.36"/>
     </filter>
     <filter id="lightBlur" x="-30%" y="-30%" width="160%" height="160%">
       <feGaussianBlur stdDeviation="12"/>
     </filter>
-    <clipPath id="ballClip">
-      <circle cx="150" cy="150" r="108"/>
-    </clipPath>
   </defs>
 
   <rect width="1600" height="520" rx="34" fill="url(#bg)"/>
   <rect width="1600" height="520" rx="34" fill="url(#centerGlow)"/>
 
   <!-- stadium lights -->
-  <g opacity="0.32">
+  <g opacity="0.34">
     <polygon points="110,36 350,210 330,235 78,70" fill="#FFFFFF" opacity="0.16" filter="url(#lightBlur)"/>
     <polygon points="1490,36 1250,210 1270,235 1522,70" fill="#FFFFFF" opacity="0.16" filter="url(#lightBlur)"/>
     <g fill="#E9FFE4">
@@ -42,7 +31,7 @@
   </g>
 
   <!-- pitch lines -->
-  <g opacity="0.22" stroke="#FFFFFF" stroke-width="4">
+  <g opacity="0.24" stroke="#FFFFFF" stroke-width="4">
     <rect x="54" y="50" width="1492" height="420" rx="22"/>
     <line x1="800" y1="50" x2="800" y2="470"/>
     <circle cx="800" cy="260" r="108"/>
@@ -53,55 +42,29 @@
     <rect x="1464" y="206" width="82" height="108"/>
   </g>
 
-  <!-- audience dots and confetti -->
-  <g opacity="0.28">
+  <!-- confetti and atmosphere -->
+  <g opacity="0.32">
     <circle cx="310" cy="96" r="4" fill="#E8FFD9"/><circle cx="354" cy="118" r="3" fill="#D6FF77"/>
     <circle cx="1214" cy="92" r="4" fill="#E8FFD9"/><circle cx="1278" cy="132" r="3" fill="#D6FF77"/>
     <circle cx="520" cy="424" r="3" fill="#E8FFD9"/><circle cx="1090" cy="410" r="4" fill="#D6FF77"/>
+    <circle cx="430" cy="352" r="3" fill="#E8FFD9"/><circle cx="1180" cy="340" r="4" fill="#D6FF77"/>
     <rect x="438" y="92" width="9" height="24" rx="4" fill="#E8FFD9" transform="rotate(22 438 92)"/>
     <rect x="1160" y="388" width="9" height="24" rx="4" fill="#E8FFD9" transform="rotate(-28 1160 388)"/>
     <rect x="1016" y="84" width="8" height="20" rx="4" fill="#D6FF77" transform="rotate(38 1016 84)"/>
     <rect x="592" y="402" width="8" height="20" rx="4" fill="#D6FF77" transform="rotate(-35 592 402)"/>
   </g>
 
-  <!-- subtle cup outline -->
-  <g opacity="0.16" stroke="#FFFFFF" stroke-width="7" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M690 380h220"/>
-    <path d="M735 380c30-35 36-78 36-118h58c0 40 6 83 36 118"/>
-    <path d="M755 168h90v86c0 40-20 70-45 70s-45-30-45-70v-86z"/>
-    <path d="M755 190h-54c0 54 25 82 61 88"/>
-    <path d="M845 190h54c0 54-25 82-61 88"/>
+  <!-- trophy outline behind title -->
+  <g opacity="0.18" stroke="#FFFFFF" stroke-width="8" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M674 386h252"/>
+    <path d="M725 386c34-42 42-88 42-134h66c0 46 8 92 42 134"/>
+    <path d="M748 160h104v96c0 48-23 84-52 84s-52-36-52-84v-96z"/>
+    <path d="M748 186h-66c0 66 32 98 76 104"/>
+    <path d="M852 186h66c0 66-32 98-76 104"/>
   </g>
 
   <!-- centered title -->
   <g filter="url(#titleShadow)">
-    <text x="800" y="290" text-anchor="middle" font-size="164" font-weight="900" font-family="PingFang SC, Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" fill="#FFFFFF" letter-spacing="18">世界杯</text>
-  </g>
-
-  <!-- classic soccer ball, smaller and more accurate -->
-  <g transform="translate(1068 165) scale(0.58)" filter="url(#ballShadow)">
-    <circle cx="150" cy="150" r="112" fill="url(#ballLight)"/>
-    <g clip-path="url(#ballClip)">
-      <path d="M150 42 L188 72 L174 116 L126 116 L112 72 Z" fill="#101827"/>
-      <path d="M72 92 L112 72 L126 116 L100 154 L55 145 Z" fill="#101827"/>
-      <path d="M228 92 L188 72 L174 116 L200 154 L245 145 Z" fill="#101827"/>
-      <path d="M86 220 L100 154 L134 174 L136 225 L108 254 Z" fill="#101827"/>
-      <path d="M214 220 L200 154 L166 174 L164 225 L192 254 Z" fill="#101827"/>
-      <path d="M150 126 L196 160 L178 214 L122 214 L104 160 Z" fill="#101827"/>
-      <g stroke="#101827" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.9">
-        <path d="M150 42 L112 72 L72 92"/>
-        <path d="M150 42 L188 72 L228 92"/>
-        <path d="M126 116 L104 160 L100 154"/>
-        <path d="M174 116 L196 160 L200 154"/>
-        <path d="M104 160 L86 220"/>
-        <path d="M196 160 L214 220"/>
-        <path d="M122 214 L108 254"/>
-        <path d="M178 214 L192 254"/>
-        <path d="M55 145 C36 160 30 184 38 210"/>
-        <path d="M245 145 C264 160 270 184 262 210"/>
-      </g>
-    </g>
-    <circle cx="150" cy="150" r="112" stroke="#07381A" stroke-width="8"/>
-    <path d="M82 76 C118 42 180 36 220 72" stroke="#FFFFFF" stroke-width="10" stroke-linecap="round" opacity="0.22"/>
+    <text x="800" y="292" text-anchor="middle" font-size="168" font-weight="900" font-family="PingFang SC, Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif" fill="#FFFFFF" letter-spacing="18">世界杯</text>
   </g>
 </svg>
