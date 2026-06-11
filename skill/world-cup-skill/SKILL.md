@@ -1,6 +1,6 @@
 ---
 name: world-cup-skill
-description: professional fifa world cup prediction skill for chatgpt. use when the user asks to predict world cup matches from text, screenshots, csv, or excel data; determine whether matches are finished; fetch latest online data before predictions; compare multiple reliable external forecasts, odds, xg, team strength, player status, historical data, and tournament context; output one weighted-consensus predicted score plus concise reference probabilities for win/draw/loss, over-under, both teams to score, qualification, and upset risk; save historical predictions and real results when files are provided.
+description: professional fifa world cup prediction skill for chatgpt. use when the user asks to predict world cup matches from text, screenshots, csv, or excel data; determine whether matches are finished; fetch latest online data before predictions; compare multiple reliable external forecasts, odds, xg, team strength, player status, historical data, and tournament context; output the top three weighted-consensus scorelines plus concise reference probabilities for win/draw/loss, over-under, both teams to score, qualification, and upset risk; save historical predictions and real results when files are provided.
 ---
 
 # World Cup Skill
@@ -14,8 +14,8 @@ Use this skill only for FIFA World Cup match prediction, schedule recognition, r
 3. Before predicting, verify match status using the latest online information.
 4. If the match is finished, do not predict. Report the real score and offer a short review or result update.
 5. If the match is live, state that it is no longer a pre-match prediction and only provide live-context analysis if requested.
-6. If the match is not started, fetch latest data, collect external predictions, and produce one weighted-consensus score.
-7. Default to one main scoreline only. Do not provide a long list of possible scores unless requested.
+6. If the match is not started, fetch latest data, collect external predictions, and produce the top three weighted-consensus scorelines.
+7. Default to three scorelines ranked by weighted support. Do not force all three scores to have the same win/draw/loss direction, and do not force artificial diversity if evidence strongly supports one direction.
 
 ## Required latest data checks
 
@@ -64,7 +64,7 @@ Discard low-quality SEO pages, uncited prediction spam, stale pages, or sources 
 
 ## Weighted consensus method
 
-The final score must be a weighted consensus, not a manually restricted score.
+The final score section must be a weighted consensus, not a manually restricted score.
 
 Default source weights:
 
@@ -79,17 +79,18 @@ If a category is missing, redistribute its weight proportionally across availabl
 Consensus steps:
 
 1. Normalize source weights so total weight equals 1.
-2. Convert score predictions into weighted expected goals and weighted scoreline votes.
+2. Convert score predictions into weighted scoreline votes and weighted expected goals.
 3. Convert odds and probability forecasts into weighted win/draw/loss, over-under, BTTS, and qualification probabilities.
 4. Use local xG/Elo/Poisson only as one source inside the ensemble, not as the sole decision-maker.
 5. Generate candidate scorelines from external score predictions plus the internal model's likely scorelines.
-6. Select the one scoreline with the best combined support across:
+6. Score each candidate by combined support across:
    - exact source scoreline support
    - closeness to weighted expected goals
    - agreement with weighted win/draw/loss direction
    - agreement with weighted over-under and BTTS signals
    - current lineup, injury, and tactical context
-7. If the consensus is weak or sources conflict, still output one score, but lower confidence and explain the conflict briefly.
+7. Output the top three candidate scorelines by weighted support. The three scorelines may include home win, draw, and away win outcomes when the evidence is close. Do not filter them to one outcome type.
+8. If the consensus is weak or sources conflict, still output three scores, but lower confidence and explain the conflict briefly.
 
 Do not add artificial rules such as forcing or banning specific low/high scores. A 1-0, 1-1, 0-1, 3-0, or 2-2 score is acceptable only if the weighted evidence supports it.
 
@@ -161,14 +162,17 @@ Consider as many useful factors as the data allows:
 
 ## Output rules
 
-Keep output concise. The main output must be one scoreline.
+Keep output concise. The main score section must contain exactly three scorelines.
 
 Default output format:
 
 ```markdown
 ## 世界杯预测：Team A vs Team B
 
-主预测比分：Team A x-y Team B
+概率最高的三个比分：
+1. Team A x-y Team B：xx%
+2. Team A x-y Team B：xx%
+3. Team A x-y Team B：xx%
 
 参考概率：
 - 胜平负：Team A 胜 xx% / 平 xx% / Team B 胜 xx%
@@ -184,7 +188,7 @@ Default output format:
 ... 本预测是数据分析，不是投注建议。
 ```
 
-When the user explicitly asks for multiple scorelines, provide no more than three possible scores. Otherwise provide only one.
+Only output one scoreline if the user explicitly asks for only one.
 
 ## Historical saving behavior
 
