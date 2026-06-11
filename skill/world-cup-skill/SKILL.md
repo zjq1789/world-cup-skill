@@ -1,6 +1,6 @@
 ---
 name: world-cup-skill
-description: professional fifa world cup prediction skill for chatgpt. use when the user asks to predict world cup matches from text, screenshots, csv, or excel data; determine whether matches are finished; fetch latest online data before predictions; compare multiple reliable external forecasts, odds, xg, team strength, player status, historical data, margin distribution, and tournament context; output the top three weighted-consensus scorelines plus concise reference probabilities for win/draw/loss, margin buckets, over-under, both teams to score, qualification, and upset risk; save historical predictions and real results when files are provided.
+description: professional fifa world cup prediction skill for chatgpt. use when the user asks to predict world cup matches from text, screenshots, csv, or excel data; determine whether matches are finished; fetch latest online data before predictions; compare multiple reliable external forecasts, odds, xg, team strength, player status, historical data, margin distribution, and tournament context; output up to three weighted-consensus scorelines, each with a probability, plus concise reference probabilities for win/draw/loss, margin buckets, over-under, both teams to score, qualification, and upset risk; save historical predictions and real results when files are provided.
 ---
 
 # World Cup Skill
@@ -14,8 +14,8 @@ Use this skill only for FIFA World Cup match prediction, schedule recognition, r
 3. Before predicting, verify match status using the latest online information.
 4. If the match is finished, do not predict. Report the real score and offer a short review or result update.
 5. If the match is live, state that it is no longer a pre-match prediction and only provide live-context analysis if requested.
-6. If the match is not started, fetch latest data, collect external predictions, estimate margin scenarios, and produce the top three weighted-consensus scorelines.
-7. Default to three scorelines ranked by weighted support. Do not force all three scores to have the same win/draw/loss direction, and do not force artificial diversity if evidence strongly supports one direction.
+6. If the match is not started, fetch latest data, collect external predictions, estimate margin scenarios, and produce up to three weighted-consensus scorelines.
+7. Default to the probability-ranked scorelines with a maximum of three. Do not force all scorelines to have the same win/draw/loss direction, and do not force artificial diversity if evidence strongly supports one direction.
 
 ## Required latest data checks
 
@@ -92,14 +92,15 @@ Consensus steps:
    - agreement with weighted margin bucket
    - agreement with weighted over-under and BTTS signals
    - current lineup, injury, and tactical context
-7. Output the top three candidate scorelines by weighted support. The three scorelines may include home win, draw, and away win outcomes when the evidence is close. Do not filter them to one outcome type.
-8. If the consensus is weak or sources conflict, still output three scores, but lower confidence and explain the conflict briefly.
+7. Convert candidate support into estimated scoreline probabilities. These probabilities should be calibrated model estimates, not guarantees. The top scoreline probabilities do not need to sum to 100%, because all other scorelines remain possible.
+8. Output the top candidates by probability, with a maximum of three scorelines. The scorelines may include home win, draw, and away win outcomes when the evidence is close. Do not filter them to one outcome type.
+9. If the consensus is weak or sources conflict, still output up to three scores, but lower confidence and explain the conflict briefly.
 
 Do not add artificial rules such as forcing or banning specific low/high scores. A 1-0, 1-1, 0-1, 3-0, or 2-2 score is acceptable only if the weighted evidence supports it.
 
 ## Margin and scenario modeling
 
-Small-margin exact scores are common in football, but a prediction set that repeatedly collapses into 1-goal wins and 1-1 draws is too conservative. To avoid this, estimate margin scenarios before selecting the top three scores.
+Small-margin exact scores are common in football, but a prediction set that repeatedly collapses into 1-goal wins and 1-1 draws is too conservative. To avoid this, estimate margin scenarios before selecting the top scorelines.
 
 Compute or infer these scenario buckets whenever data allows:
 
@@ -186,14 +187,14 @@ Consider as many useful factors as the data allows:
 
 ## Output rules
 
-Keep output concise. The main score section must contain exactly three scorelines.
+Keep output concise. The main score section must contain no more than three scorelines, and every scoreline must include its corresponding probability.
 
 Default output format:
 
 ```markdown
 ## 世界杯预测：Team A vs Team B
 
-概率最高的三个比分：
+概率最高的比分：
 1. Team A x-y Team B：xx%
 2. Team A x-y Team B：xx%
 3. Team A x-y Team B：xx%
@@ -213,7 +214,7 @@ Default output format:
 ... 本预测是数据分析，不是投注建议。
 ```
 
-Only output one scoreline if the user explicitly asks for only one.
+If there are fewer than three reliable candidate scorelines, output fewer and state why. Never output more than three scorelines. Only output one scoreline if the user explicitly asks for only one.
 
 ## Historical saving behavior
 
@@ -223,7 +224,7 @@ When the user provides editable CSV/Excel-like data, use these tables:
 - `match_results.csv` for real results
 - `team_features.csv` for team feature calibration
 
-When a match is finished, prefer updating `match_results.csv` and marking the related prediction with final score and exact-hit status if data is available.
+When a match is finished, prefer updating `match_results.csv` and marking the related prediction with final score and exact-hit status if the data is available.
 
 ## Screenshot handling
 
