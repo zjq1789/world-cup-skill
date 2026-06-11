@@ -1,6 +1,6 @@
 ---
 name: world-cup-skill
-description: professional fifa world cup prediction skill for chatgpt. use when the user asks to predict world cup matches from text, screenshots, csv, or excel data; determine whether matches are finished; fetch latest online data before predictions; compare multiple reliable external forecasts, odds, xg, team strength, player status, historical data, and tournament context; output the top three weighted-consensus scorelines plus concise reference probabilities for win/draw/loss, over-under, both teams to score, qualification, and upset risk; save historical predictions and real results when files are provided.
+description: professional fifa world cup prediction skill for chatgpt. use when the user asks to predict world cup matches from text, screenshots, csv, or excel data; determine whether matches are finished; fetch latest online data before predictions; compare multiple reliable external forecasts, odds, xg, team strength, player status, historical data, margin distribution, and tournament context; output the top three weighted-consensus scorelines plus concise reference probabilities for win/draw/loss, margin buckets, over-under, both teams to score, qualification, and upset risk; save historical predictions and real results when files are provided.
 ---
 
 # World Cup Skill
@@ -14,7 +14,7 @@ Use this skill only for FIFA World Cup match prediction, schedule recognition, r
 3. Before predicting, verify match status using the latest online information.
 4. If the match is finished, do not predict. Report the real score and offer a short review or result update.
 5. If the match is live, state that it is no longer a pre-match prediction and only provide live-context analysis if requested.
-6. If the match is not started, fetch latest data, collect external predictions, and produce the top three weighted-consensus scorelines.
+6. If the match is not started, fetch latest data, collect external predictions, estimate margin scenarios, and produce the top three weighted-consensus scorelines.
 7. Default to three scorelines ranked by weighted support. Do not force all three scores to have the same win/draw/loss direction, and do not force artificial diversity if evidence strongly supports one direction.
 
 ## Required latest data checks
@@ -31,6 +31,7 @@ Before every prediction, search for or verify:
 - rest days, travel load, fatigue, weather, pitch, and altitude when relevant
 - tactical matchup: pressing resistance, wide defense, aerial duels, counterattack, set pieces
 - market probabilities or odds as calibration only
+- handicap/spread or Asian handicap signal when available, because it reflects expected margin better than 1X2 odds
 - late news that may materially change the prediction
 
 If data is missing, briefly mark it as a data gap.
@@ -44,8 +45,8 @@ Prefer at least 5 sources. If fewer are available, use what can be verified and 
 Prioritize these source types:
 
 1. Quantitative football analytics forecasts: model-based score/probability predictions from reputable analytics providers.
-2. Market consensus: odds or odds aggregators converted into implied win/draw/loss and over-under probabilities.
-3. xG/Elo/statistical models: team strength, expected goals, recent performance, and matchup-based model outputs.
+2. Market consensus: odds or odds aggregators converted into implied win/draw/loss, handicap/spread, and over-under probabilities.
+3. xG/Elo/statistical models: team strength, expected goals, recent performance, margin distribution, and matchup-based model outputs.
 4. Reputable media or expert prediction desks: only use clear predicted scorelines or clearly stated probability views.
 5. User-uploaded CSV/Excel history: past predictions, real results, and team features for local calibration.
 
@@ -55,6 +56,7 @@ For each source, record:
 - source type
 - predicted score if available
 - win/draw/loss probabilities if available
+- handicap/spread or expected-margin signal if available
 - over-under or total-goal signal if available
 - xG or expected-goal signal if available
 - injuries/lineup assumptions if stated
@@ -80,19 +82,40 @@ Consensus steps:
 
 1. Normalize source weights so total weight equals 1.
 2. Convert score predictions into weighted scoreline votes and weighted expected goals.
-3. Convert odds and probability forecasts into weighted win/draw/loss, over-under, BTTS, and qualification probabilities.
+3. Convert odds and probability forecasts into weighted win/draw/loss, handicap/spread, over-under, BTTS, and qualification probabilities.
 4. Use local xG/Elo/Poisson only as one source inside the ensemble, not as the sole decision-maker.
 5. Generate candidate scorelines from external score predictions plus the internal model's likely scorelines.
 6. Score each candidate by combined support across:
    - exact source scoreline support
    - closeness to weighted expected goals
    - agreement with weighted win/draw/loss direction
+   - agreement with weighted margin bucket
    - agreement with weighted over-under and BTTS signals
    - current lineup, injury, and tactical context
 7. Output the top three candidate scorelines by weighted support. The three scorelines may include home win, draw, and away win outcomes when the evidence is close. Do not filter them to one outcome type.
 8. If the consensus is weak or sources conflict, still output three scores, but lower confidence and explain the conflict briefly.
 
 Do not add artificial rules such as forcing or banning specific low/high scores. A 1-0, 1-1, 0-1, 3-0, or 2-2 score is acceptable only if the weighted evidence supports it.
+
+## Margin and scenario modeling
+
+Small-margin exact scores are common in football, but a prediction set that repeatedly collapses into 1-goal wins and 1-1 draws is too conservative. To avoid this, estimate margin scenarios before selecting the top three scores.
+
+Compute or infer these scenario buckets whenever data allows:
+
+- team A wins by 2+ goals
+- team A wins by 1 goal
+- draw
+- team B wins by 1 goal
+- team B wins by 2+ goals
+- high-total game, meaning 4+ total goals
+- low-total game, meaning 0-1 total goals
+
+Use handicap/spread, expected goal difference, xG gap, Elo gap, squad mismatch, finishing quality, and tactical tempo to estimate these buckets. A team with very high win probability should not automatically become a 1-goal win; check whether sources imply dominance, clean-sheet probability, or multi-goal margin.
+
+When ranking candidate scores, include margin-bucket support as a first-class signal. For example, if the consensus says a favorite has strong 2+ goal margin support, candidates such as 2-0, 3-0, 3-1, or 4-1 should compete seriously with 1-0. If the consensus says the match is close, then 1-1, 2-1, 1-2, 0-0, and 0-1 may naturally rank higher.
+
+This is not a hard rule and must not ban any score. It only ensures that the score ranking reflects the full probability distribution, not only conservative exact-score modes.
 
 ## Prediction factors to consider
 
@@ -155,6 +178,7 @@ Consider as many useful factors as the data allows:
 
 - win/draw/loss odds
 - over-under odds
+- handicap/spread or Asian handicap
 - market movement
 - market-vs-model disagreement
 - public bias or overreaction risk
@@ -176,6 +200,7 @@ Default output format:
 
 参考概率：
 - 胜平负：Team A 胜 xx% / 平 xx% / Team B 胜 xx%
+- 分差倾向：Team A 2+球胜 xx% / Team A 1球胜 xx% / 平 xx% / Team B 1球胜 xx% / Team B 2+球胜 xx%
 - 大小球：大2.5 xx% / 小2.5 xx%
 - 双方进球：xx%
 - 晋级概率：Team A xx% / Team B xx%
