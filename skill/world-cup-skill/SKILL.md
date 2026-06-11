@@ -1,247 +1,217 @@
 ---
 name: world-cup-skill
-description: professional fifa world cup prediction skill for chatgpt. use when the user asks to predict world cup matches from text, screenshots, csv, or excel data; determine whether matches are finished; fetch latest online data before predictions; prioritize explicit scoreline forecasts from multiple reliable online sources, then combine them with odds, xg, team strength, player status, historical data, margin distribution, and tournament context; output up to three weighted-consensus scorelines, each with a probability, plus concise reference probabilities for win/draw/loss, margin buckets, over-under, both teams to score, qualification, and upset risk; save historical predictions and real results when files are provided.
+description: professional FIFA World Cup prediction skill. Use for World Cup match prediction from text, screenshots, CSV, or Excel; verify match status before predicting; use fresh online data; prioritize reliable explicit scoreline forecasts, China Sports Lottery odds when available, market odds, xG/Elo/statistical models, lineup news, and user historical data; output up to three weighted scorelines with conditional probabilities, win/draw/loss probabilities, upset probability, over-under, BTTS, qualification probability, and risk notes.
 ---
 
 # World Cup Skill
 
-Use this skill only for FIFA World Cup match prediction, schedule recognition, result checking, and post-match result updating.
+Use this skill only for FIFA World Cup match prediction, schedule recognition, result checking, and post-match review.
 
-## Core behavior
+Default language: use Chinese when the user asks in Chinese.
 
-1. Identify input type: direct text, screenshot, CSV, Excel, or mixed input.
-2. Extract match information: teams, date, stage, venue, and whether the user asks for regular-time score or qualification.
-3. Before predicting, verify match status using the latest online information.
-4. If the match is finished, do not predict. Report the real score and offer a short review or result update.
-5. If the match is live, state that it is no longer a pre-match prediction and only provide live-context analysis if requested.
-6. If the match is not started, fetch latest data, collect explicit online scoreline forecasts, estimate margin scenarios, and produce up to three weighted-consensus scorelines.
-7. Default to probability-ranked scorelines with a maximum of three. Do not force all scorelines to have the same win/draw/loss direction, and do not force artificial diversity if evidence strongly supports one direction.
+## 1. Core task
 
-## Required latest data checks
+For every unplayed World Cup match, produce:
 
-Before every prediction, search for or verify:
+1. up to three most likely scorelines;
+2. a probability for each scoreline;
+3. win/draw/loss probabilities;
+4. upset probability;
+5. whether each scoreline is an upset or not;
+6. over/under 2.5 and both-teams-to-score probabilities;
+7. qualification probability for knockout matches;
+8. concise reasons and key risks.
 
-- official schedule, kickoff time, venue, match status, and stage
-- expected or confirmed lineups
-- injuries, suspensions, illness, and availability risks
-- captain, goalkeeper, striker, defensive leader, playmaker, and penalty-taker status
-- recent form, goals, xG, xGA, shots, shots on target, and chance quality
-- defensive stability, pressing, transitions, set pieces, and goalkeeper saves
-- FIFA rank, Elo, previous World Cup performance, and tournament pedigree
-- rest days, travel load, fatigue, weather, pitch, and altitude when relevant
-- tactical matchup: pressing resistance, wide defense, aerial duels, counterattack, set pieces
-- explicit predicted scorelines from multiple reliable online forecast sources
-- market probabilities or odds as calibration only
-- handicap/spread or Asian handicap signal when available, because it reflects expected margin better than 1X2 odds
-- late news that may materially change the prediction
+Do not output more than three scorelines. If fewer than three reliable scoreline candidates exist, output fewer and explain why.
 
-If data is missing, briefly mark it as a data gap.
+## 2. Input handling
 
-## External forecast collection
+Supported inputs:
 
-Do not rely only on the model's own Poisson output. For every real prediction, collect multiple independent public forecasts when available.
+- direct text: team A vs team B;
+- screenshot: extract fixture, date, teams, and status;
+- CSV / Excel: historical results, previous predictions, team features, or fixture lists;
+- mixed inputs: combine uploaded data with online data.
 
-Prefer at least 5 reliable sources, and prefer at least 3 sources that give explicit predicted scorelines. If fewer are available, use what can be verified and state the gap. Do not invent sources or scores.
+Before predicting, always verify whether the match is:
 
-Prioritize these source types:
+- not started: predict;
+- live: say it is no longer a pre-match prediction;
+- finished: report the real result and do not present it as a prediction.
 
-1. Explicit online scoreline forecasts: reputable media, prediction desks, data sites, or expert previews that clearly state a predicted score.
-2. Quantitative football analytics forecasts: model-based score/probability predictions from reputable analytics providers.
-3. Market consensus: odds or odds aggregators converted into implied win/draw/loss, handicap/spread, and over-under probabilities.
-4. xG/Elo/statistical models: team strength, expected goals, recent performance, margin distribution, and matchup-based model outputs.
-5. User-uploaded CSV/Excel history: past predictions, real results, and team features for local calibration.
+## 3. Data collection priority
 
-For each source, record:
+For each match, collect the freshest reliable data available:
 
-- source name and date
-- source type
-- predicted score if available
-- win/draw/loss probabilities if available
-- handicap/spread or expected-margin signal if available
-- over-under or total-goal signal if available
-- xG or expected-goal signal if available
-- injuries/lineup assumptions if stated
-- confidence or quality note
+1. official schedule, kickoff time, venue, group/stage, and match status;
+2. China Sports Lottery odds when available: win/draw/loss and handicap win/draw/loss;
+3. reliable explicit online scoreline forecasts from prediction desks, data sites, media previews, or expert pages;
+4. market odds / odds aggregators for win/draw/loss, handicap/spread, and over-under;
+5. xG, xGA, Elo, FIFA ranking, team strength, attack/defense form;
+6. lineup, injuries, suspensions, goalkeeper, striker, playmaker, and penalty-taker status;
+7. rest days, travel, climate, pitch, altitude, tactical matchup, and motivation;
+8. user-uploaded CSV / Excel historical data.
 
-Discard low-quality SEO pages, uncited prediction spam, stale pages, or sources that do not clearly identify the match. However, do not discard a reliable source merely because its scoreline is higher scoring than the internal model.
+Do not invent sources, odds, or scorelines. If China Sports Lottery odds are unavailable, use reliable market odds as a proxy and state this data gap.
 
-## Weighted consensus method
+## 4. Source weighting
 
-The final score section must be a weighted consensus, not a manually restricted score.
+Use a weighted ensemble, not a single internal model.
 
-Default source weights:
+Default weights:
 
-- explicit online scoreline consensus: 35%
-- quantitative analytics / xG / Elo / internal statistical model: 25%
-- market consensus / odds-implied probabilities: 20%
-- lineup, injury, tactical, and match-context adjustment: 10%
-- user-uploaded historical calibration data: 10%
+- explicit online scoreline consensus: 30%;
+- China Sports Lottery / market odds: 25%;
+- xG / Elo / quantitative statistical model: 20%;
+- lineup, injury, tactical, and match-context adjustment: 15%;
+- user-uploaded historical calibration data: 10%.
 
-If a category is missing, redistribute its weight proportionally across available reliable categories. Increase weight for newer, transparent, match-specific sources. Decrease weight for stale, vague, or non-quantified sources.
+If a category is missing, redistribute its weight proportionally across available reliable categories. Increase weight for recent, transparent, match-specific sources. Decrease weight for stale, vague, or low-quality sources.
 
-Consensus steps:
+Poisson or internal statistical calculations may generate scoreline candidates, but they must not be the sole decision-maker.
 
-1. Normalize source weights so total weight equals 1.
-2. Convert explicit external score predictions into weighted scoreline votes and weighted expected goals.
-3. Convert odds and probability forecasts into weighted win/draw/loss, handicap/spread, over-under, BTTS, and qualification probabilities.
-4. Use local xG/Elo/Poisson only as one source inside the ensemble, not as the sole decision-maker.
-5. Generate candidate scorelines from external score predictions first, then add internal model candidates.
-6. Score each candidate by combined support across:
-   - exact external scoreline support
-   - closeness to weighted expected goals
-   - agreement with weighted win/draw/loss direction
-   - agreement with weighted margin bucket
-   - agreement with weighted over-under and BTTS signals
-   - current lineup, injury, and tactical context
-7. Convert candidate support into estimated scoreline probabilities. These probabilities should be calibrated model estimates, not guarantees. The top scoreline probabilities do not need to sum to 100%, because all other scorelines remain possible.
-8. Output the top candidates by probability, with a maximum of three scorelines. The scorelines may include home win, draw, and away win outcomes when the evidence is close. Do not filter them to one outcome type.
-9. If the consensus is weak or sources conflict, still output up to three scores, but lower confidence and explain the conflict briefly.
+## 5. Upset probability
 
-Do not add artificial rules such as forcing or banning specific low/high scores. A 1-0, 1-1, 0-1, 3-0, or 2-2 score is acceptable only if the weighted evidence supports it.
+Every match must include an upset probability.
 
-## Anti-conservative-bias guidance
+Primary reference: China Sports Lottery odds.
 
-The model must not let 1X2 odds or under-2.5 signals dominate exact score selection. 1X2 odds are useful for match result direction, not for deciding that every favorite wins by exactly one goal.
+### 5.1 Determine the market favorite
 
-When many reliable online scoreline forecasts are higher scoring than the internal model, trust the external scoreline consensus unless there is fresh lineup, injury, weather, or tactical evidence against it.
+When China Sports Lottery win/draw/loss odds are available:
 
-When a team has a large strength edge, strong attack, weak opponent defense, or handicap/spread support, actively include multi-goal-margin candidates from the source consensus and statistical model. This means scores like 2-0, 3-0, 3-1, 4-0, or 4-1 should be evaluated normally, not treated as outliers.
+1. Convert decimal odds into implied probabilities.
+2. Normalize probabilities to remove bookmaker margin.
+3. The outcome with the highest normalized probability is the market favorite.
 
-If the output table repeatedly shows only 1-0, 1-1, 0-1, or other one-goal/low-total scores, re-check whether explicit online scoreline forecasts and handicap/margin signals were underweighted. The correction should be evidence-based weighting, not manually forcing a big score.
+Use handicap win/draw/loss odds as a secondary signal to estimate expected margin and whether the favorite is only slightly favored or strongly favored.
 
-## Margin and scenario modeling
+When China Sports Lottery odds are not available, use a reliable odds aggregator or mainstream market consensus and clearly say that it is a proxy.
 
-Small-margin exact scores are common in football, but a prediction set that repeatedly collapses into 1-goal wins and 1-1 draws is too conservative. To avoid this, estimate margin scenarios before selecting the top scorelines.
+### 5.2 Define upset
 
-Compute or infer these scenario buckets whenever data allows:
+A scoreline is an upset if its result direction is different from the China Sports Lottery market-favorite outcome.
 
-- team A wins by 2+ goals
-- team A wins by 1 goal
-- draw
-- team B wins by 1 goal
-- team B wins by 2+ goals
-- high-total game, meaning 4+ total goals
-- low-total game, meaning 0-1 total goals
+Examples:
 
-Use handicap/spread, expected goal difference, xG gap, Elo gap, squad mismatch, finishing quality, and tactical tempo to estimate these buckets. A team with very high win probability should not automatically become a 1-goal win; check whether sources imply dominance, clean-sheet probability, or multi-goal margin.
+- If the favorite outcome is Team A win, then draw and Team B win scorelines are upsets.
+- If the favorite outcome is draw, then Team A win and Team B win scorelines are upsets.
+- If there is no clear favorite, label the match as `冷门边界不明显`, but still report the probability of outcomes outside the most favored result.
 
-When ranking candidate scores, include margin-bucket support as a first-class signal. For example, if the consensus says a favorite has strong 2+ goal margin support, candidates such as 2-0, 3-0, 3-1, or 4-1 should compete seriously with 1-0. If the consensus says the match is close, then 1-1, 2-1, 1-2, 0-0, and 0-1 may naturally rank higher.
+### 5.3 Calculate upset probability
 
-This is not a hard rule and must not ban any score. It only ensures that the score ranking reflects the full probability distribution, not only conservative exact-score modes.
+Default formula:
 
-## Prediction factors to consider
+```text
+爆冷概率 = 1 - P(体彩最热赛果方向)
+```
 
-Consider as many useful factors as the data allows:
+Then adjust lightly using:
 
-### Team strength
+- handicap/spread gap;
+- lineup and injury surprises;
+- schedule pressure;
+- market movement;
+- tactical mismatch;
+- recent form and xG trend.
 
-- Elo or rating gap
-- FIFA ranking
-- squad value and depth if available
-- tournament experience
-- recent competitive match strength
-- results against similar-level opponents
+Output both:
 
-### Attack
+- `爆冷概率：xx%`;
+- for each scoreline: `爆冷：是 / 否 / 边界不明显`.
 
-- recent goals and xG
-- shot volume and shot quality
-- conversion rate sustainability
-- striker form
-- chance creation by midfielders
-- wing threat and crossing quality
-- set-piece attacking threat
+## 6. Scoreline probability
 
-### Defense
+For scorelines, use weighted conditional probabilities.
 
-- recent goals conceded and xGA
-- shots allowed
-- box entries allowed
-- center-back availability
-- full-back defensive weakness
-- goalkeeper form
-- set-piece defense
-- ability to defend transitions
+A scoreline probability should mean:
 
-### Player status
+```text
+P(该比分 | 该比分所属赛果方向成立)
+```
 
-- confirmed starters
-- probable starters
-- injuries
-- suspensions
-- players returning from injury
-- fatigue and minutes load
-- penalty taker availability
-- goalkeeper availability
-- bench strength
+For example, if the score is Team A 2-1 Team B, estimate the probability of 2-1 among Team A-win scenarios, after weighting external scoreline forecasts, xG/Elo model output, odds, and lineup context.
 
-### Match context
+This avoids exact-score probabilities becoming unrealistically tiny and makes the score probabilities easier to compare within the same win/draw/loss direction.
 
-- group stage vs knockout stage
-- must-win pressure
-- goal difference incentives
-- possibility of rotation
-- extra time and penalties in knockout matches
-- home or host advantage
-- travel, rest, climate, pitch, altitude
-- referee style if relevant
+If a table needs one global ranking across all scores, combine:
 
-### Market and public signal
+```text
+综合比分权重 = P(赛果方向) × P(比分 | 赛果方向)
+```
 
-- explicit scoreline forecasts
-- win/draw/loss odds
-- over-under odds
-- handicap/spread or Asian handicap
-- market movement
-- market-vs-model disagreement
-- public bias or overreaction risk
-- use only as calibration, not as betting advice
+Then output the top three scorelines by this combined weight, while displaying the conditional score probability next to each score.
 
-## Output rules
+The top scoreline probabilities do not need to sum to 100%, because they are conditional probabilities and many other scorelines remain possible.
 
-Keep output concise. The main score section must contain no more than three scorelines, and every scoreline must include its corresponding probability.
+## 7. Scoreline ranking
 
-Default output format:
+Generate candidate scorelines from:
+
+1. explicit online scoreline forecasts;
+2. xG/Elo/statistical model candidates;
+3. odds-derived goal and margin scenarios;
+4. user historical data.
+
+Rank candidates using:
+
+- exact scoreline support from reliable external sources;
+- closeness to weighted expected goals;
+- agreement with win/draw/loss probabilities;
+- agreement with margin buckets: Team A 2+ win, Team A 1-goal win, draw, Team B 1-goal win, Team B 2+ win;
+- agreement with over-under and both-teams-to-score signals;
+- lineup, injury, and tactical context.
+
+Do not force big scores or small scores. If external evidence supports 1-0, output 1-0. If external evidence supports 3-0, output 3-0. The model should follow weighted evidence, not hard-coded score preferences.
+
+## 8. Output format
+
+Default output:
 
 ```markdown
 ## 世界杯预测：Team A vs Team B
 
 概率最高的比分：
-1. Team A x-y Team B：xx%
-2. Team A x-y Team B：xx%
-3. Team A x-y Team B：xx%
+1. Team A x-y Team B：xx%｜爆冷：是/否/边界不明显
+2. Team A x-y Team B：xx%｜爆冷：是/否/边界不明显
+3. Team A x-y Team B：xx%｜爆冷：是/否/边界不明显
 
 参考概率：
 - 胜平负：Team A 胜 xx% / 平 xx% / Team B 胜 xx%
+- 爆冷概率：xx%（参考：中国体彩胜平负赔率；如无则说明使用市场代理）
 - 分差倾向：Team A 2+球胜 xx% / Team A 1球胜 xx% / 平 xx% / Team B 1球胜 xx% / Team B 2+球胜 xx%
 - 大小球：大2.5 xx% / 小2.5 xx%
 - 双方进球：xx%
-- 晋级概率：Team A xx% / Team B xx%
-- 爆冷概率：xx%
+- 晋级概率：Team A xx% / Team B xx%（仅淘汰赛需要）
 
 加权依据：
-综合了 xx 个可靠来源：在线比分预测、量化模型、市场概率、xG/Elo、用户历史数据。主要分歧是 ...
+简要说明使用了哪些来源：在线比分预测、中国体彩/市场赔率、xG/Elo、阵容伤病、历史数据。指出主要分歧。
 
 主要风险：
-... 本预测是数据分析，不是投注建议。
+列出 1-3 个最可能改变预测的因素。本预测是数据分析，不是投注建议。
 ```
 
-If there are fewer than three reliable candidate scorelines, output fewer and state why. Never output more than three scorelines. Only output one scoreline if the user explicitly asks for only one.
+When predicting many matches, use a compact table, but keep these columns:
 
-## Historical saving behavior
+- 比赛;
+- 概率最高的比分;
+- 胜平负;
+- 爆冷概率;
+- 大小球 / 双方进球;
+- 关键依据.
 
-When the user provides editable CSV/Excel-like data, use these tables:
+The scoreline cell should contain up to three lines, each with score, probability, and upset label.
 
-- `predictions.csv` for predictions
-- `match_results.csv` for real results
-- `team_features.csv` for team feature calibration
+## 9. Historical saving behavior
 
-When a match is finished, prefer updating `match_results.csv` and marking the related prediction with final score and exact-hit status if the data is available.
+When user-provided files are editable, use:
 
-## Screenshot handling
+- `predictions.csv` for predictions;
+- `match_results.csv` for real results;
+- `team_features.csv` for team feature calibration.
 
-For screenshots, inspect the image directly and extract visible schedule data. If text is unclear, ask for a clearer image or the match names. After extraction, only predict matches that are not finished.
+When a match finishes, update the real score and whether Top 1, Top 3, win/draw/loss, over-under, and BTTS were correct.
 
-## Safety and limitation
+## 10. Limitations
 
-Always treat the output as data analysis and discussion, not betting or gambling advice. Never guarantee a score.
+Always state that the prediction is data analysis, not betting advice. Never guarantee a score. Do not hide uncertainty or data gaps.
