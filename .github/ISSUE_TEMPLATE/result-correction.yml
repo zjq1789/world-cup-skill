@@ -1,0 +1,33 @@
+name: 赛果或复盘修正
+description: 提交真实赛果、命中情况或复盘修正
+title: "[Result] "
+labels: ["result", "review"]
+body:
+  - type: input
+    id: match
+    attributes:
+      label: 比赛
+      placeholder: 墨西哥 vs 南非
+    validations:
+      required: true
+  - type: input
+    id: date
+    attributes:
+      label: 比赛日期
+      placeholder: 2026-06-12
+    validations:
+      required: true
+  - type: input
+    id: final_score
+    attributes:
+      label: 真实比分
+      placeholder: 墨西哥 2-1 南非
+    validations:
+      required: true
+  - type: textarea
+    id: correction
+    attributes:
+      label: 需要修正的内容
+      description: 可以填写命中情况、数据源错误、赛程错误或复盘补充。
+    validations:
+      required: true
