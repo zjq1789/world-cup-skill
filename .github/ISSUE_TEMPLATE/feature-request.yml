@@ -1,0 +1,25 @@
+name: 功能建议
+description: 提出新的功能、模块或展示方式
+title: "[Feature] "
+labels: ["feature"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: 你希望解决什么问题？
+      placeholder: 例如：希望支持自动生成每日预测榜、增加英文 README、增加可视化图表等。
+    validations:
+      required: true
+  - type: textarea
+    id: solution
+    attributes:
+      label: 你建议怎么做？
+      placeholder: 描述你的方案。
+    validations:
+      required: false
+  - type: textarea
+    id: extra
+    attributes:
+      label: 其他补充
+    validations:
+      required: false
