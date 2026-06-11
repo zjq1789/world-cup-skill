@@ -1,6 +1,6 @@
 ---
 name: world-cup-skill
-description: professional fifa world cup prediction skill for chatgpt. use when the user asks to predict world cup matches from text, screenshots, csv, or excel data; determine whether matches are finished; fetch latest online data before predictions; compare multiple reliable external forecasts, odds, xg, team strength, player status, historical data, margin distribution, and tournament context; output up to three weighted-consensus scorelines, each with a probability, plus concise reference probabilities for win/draw/loss, margin buckets, over-under, both teams to score, qualification, and upset risk; save historical predictions and real results when files are provided.
+description: professional fifa world cup prediction skill for chatgpt. use when the user asks to predict world cup matches from text, screenshots, csv, or excel data; determine whether matches are finished; fetch latest online data before predictions; prioritize explicit scoreline forecasts from multiple reliable online sources, then combine them with odds, xg, team strength, player status, historical data, margin distribution, and tournament context; output up to three weighted-consensus scorelines, each with a probability, plus concise reference probabilities for win/draw/loss, margin buckets, over-under, both teams to score, qualification, and upset risk; save historical predictions and real results when files are provided.
 ---
 
 # World Cup Skill
@@ -14,8 +14,8 @@ Use this skill only for FIFA World Cup match prediction, schedule recognition, r
 3. Before predicting, verify match status using the latest online information.
 4. If the match is finished, do not predict. Report the real score and offer a short review or result update.
 5. If the match is live, state that it is no longer a pre-match prediction and only provide live-context analysis if requested.
-6. If the match is not started, fetch latest data, collect external predictions, estimate margin scenarios, and produce up to three weighted-consensus scorelines.
-7. Default to the probability-ranked scorelines with a maximum of three. Do not force all scorelines to have the same win/draw/loss direction, and do not force artificial diversity if evidence strongly supports one direction.
+6. If the match is not started, fetch latest data, collect explicit online scoreline forecasts, estimate margin scenarios, and produce up to three weighted-consensus scorelines.
+7. Default to probability-ranked scorelines with a maximum of three. Do not force all scorelines to have the same win/draw/loss direction, and do not force artificial diversity if evidence strongly supports one direction.
 
 ## Required latest data checks
 
@@ -30,6 +30,7 @@ Before every prediction, search for or verify:
 - FIFA rank, Elo, previous World Cup performance, and tournament pedigree
 - rest days, travel load, fatigue, weather, pitch, and altitude when relevant
 - tactical matchup: pressing resistance, wide defense, aerial duels, counterattack, set pieces
+- explicit predicted scorelines from multiple reliable online forecast sources
 - market probabilities or odds as calibration only
 - handicap/spread or Asian handicap signal when available, because it reflects expected margin better than 1X2 odds
 - late news that may materially change the prediction
@@ -40,14 +41,14 @@ If data is missing, briefly mark it as a data gap.
 
 Do not rely only on the model's own Poisson output. For every real prediction, collect multiple independent public forecasts when available.
 
-Prefer at least 5 sources. If fewer are available, use what can be verified and state the gap. Do not invent sources or scores.
+Prefer at least 5 reliable sources, and prefer at least 3 sources that give explicit predicted scorelines. If fewer are available, use what can be verified and state the gap. Do not invent sources or scores.
 
 Prioritize these source types:
 
-1. Quantitative football analytics forecasts: model-based score/probability predictions from reputable analytics providers.
-2. Market consensus: odds or odds aggregators converted into implied win/draw/loss, handicap/spread, and over-under probabilities.
-3. xG/Elo/statistical models: team strength, expected goals, recent performance, margin distribution, and matchup-based model outputs.
-4. Reputable media or expert prediction desks: only use clear predicted scorelines or clearly stated probability views.
+1. Explicit online scoreline forecasts: reputable media, prediction desks, data sites, or expert previews that clearly state a predicted score.
+2. Quantitative football analytics forecasts: model-based score/probability predictions from reputable analytics providers.
+3. Market consensus: odds or odds aggregators converted into implied win/draw/loss, handicap/spread, and over-under probabilities.
+4. xG/Elo/statistical models: team strength, expected goals, recent performance, margin distribution, and matchup-based model outputs.
 5. User-uploaded CSV/Excel history: past predictions, real results, and team features for local calibration.
 
 For each source, record:
@@ -62,7 +63,7 @@ For each source, record:
 - injuries/lineup assumptions if stated
 - confidence or quality note
 
-Discard low-quality SEO pages, uncited prediction spam, stale pages, or sources that do not clearly identify the match.
+Discard low-quality SEO pages, uncited prediction spam, stale pages, or sources that do not clearly identify the match. However, do not discard a reliable source merely because its scoreline is higher scoring than the internal model.
 
 ## Weighted consensus method
 
@@ -70,10 +71,10 @@ The final score section must be a weighted consensus, not a manually restricted 
 
 Default source weights:
 
-- quantitative analytics model: 30%
-- market consensus / odds-implied probabilities: 25%
-- xG/Elo/internal statistical model: 20%
-- reputable media/expert score predictions: 15%
+- explicit online scoreline consensus: 35%
+- quantitative analytics / xG / Elo / internal statistical model: 25%
+- market consensus / odds-implied probabilities: 20%
+- lineup, injury, tactical, and match-context adjustment: 10%
 - user-uploaded historical calibration data: 10%
 
 If a category is missing, redistribute its weight proportionally across available reliable categories. Increase weight for newer, transparent, match-specific sources. Decrease weight for stale, vague, or non-quantified sources.
@@ -81,12 +82,12 @@ If a category is missing, redistribute its weight proportionally across availabl
 Consensus steps:
 
 1. Normalize source weights so total weight equals 1.
-2. Convert score predictions into weighted scoreline votes and weighted expected goals.
+2. Convert explicit external score predictions into weighted scoreline votes and weighted expected goals.
 3. Convert odds and probability forecasts into weighted win/draw/loss, handicap/spread, over-under, BTTS, and qualification probabilities.
 4. Use local xG/Elo/Poisson only as one source inside the ensemble, not as the sole decision-maker.
-5. Generate candidate scorelines from external score predictions plus the internal model's likely scorelines.
+5. Generate candidate scorelines from external score predictions first, then add internal model candidates.
 6. Score each candidate by combined support across:
-   - exact source scoreline support
+   - exact external scoreline support
    - closeness to weighted expected goals
    - agreement with weighted win/draw/loss direction
    - agreement with weighted margin bucket
@@ -97,6 +98,16 @@ Consensus steps:
 9. If the consensus is weak or sources conflict, still output up to three scores, but lower confidence and explain the conflict briefly.
 
 Do not add artificial rules such as forcing or banning specific low/high scores. A 1-0, 1-1, 0-1, 3-0, or 2-2 score is acceptable only if the weighted evidence supports it.
+
+## Anti-conservative-bias guidance
+
+The model must not let 1X2 odds or under-2.5 signals dominate exact score selection. 1X2 odds are useful for match result direction, not for deciding that every favorite wins by exactly one goal.
+
+When many reliable online scoreline forecasts are higher scoring than the internal model, trust the external scoreline consensus unless there is fresh lineup, injury, weather, or tactical evidence against it.
+
+When a team has a large strength edge, strong attack, weak opponent defense, or handicap/spread support, actively include multi-goal-margin candidates from the source consensus and statistical model. This means scores like 2-0, 3-0, 3-1, 4-0, or 4-1 should be evaluated normally, not treated as outliers.
+
+If the output table repeatedly shows only 1-0, 1-1, 0-1, or other one-goal/low-total scores, re-check whether explicit online scoreline forecasts and handicap/margin signals were underweighted. The correction should be evidence-based weighting, not manually forcing a big score.
 
 ## Margin and scenario modeling
 
@@ -177,6 +188,7 @@ Consider as many useful factors as the data allows:
 
 ### Market and public signal
 
+- explicit scoreline forecasts
 - win/draw/loss odds
 - over-under odds
 - handicap/spread or Asian handicap
@@ -208,7 +220,7 @@ Default output format:
 - 爆冷概率：xx%
 
 加权依据：
-综合了 xx 个可靠来源：量化模型、市场概率、xG/Elo、媒体预测、用户历史数据。主要分歧是 ...
+综合了 xx 个可靠来源：在线比分预测、量化模型、市场概率、xG/Elo、用户历史数据。主要分歧是 ...
 
 主要风险：
 ... 本预测是数据分析，不是投注建议。
