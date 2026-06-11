@@ -1,0 +1,43 @@
+name: 推荐预测数据源
+description: 推荐可用于世界杯预测的可靠数据源或预测机构
+title: "[Source] "
+labels: ["data-source", "prediction"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        感谢推荐数据源。请尽量提供清晰来源、更新时间和可验证链接。
+  - type: input
+    id: source_name
+    attributes:
+      label: 数据源名称
+      placeholder: 例如 Opta / FIFA / FiveThirtyEight 风格模型 / 赔率聚合站
+    validations:
+      required: true
+  - type: input
+    id: source_url
+    attributes:
+      label: 数据源链接
+      placeholder: https://...
+    validations:
+      required: true
+  - type: dropdown
+    id: source_type
+    attributes:
+      label: 数据源类型
+      options:
+        - 量化预测机构
+        - 赔率 / 市场概率
+        - xG / Elo / 技术数据
+        - 专业媒体预测
+        - 历史赛果数据
+        - 其他
+    validations:
+      required: true
+  - type: textarea
+    id: reason
+    attributes:
+      label: 推荐理由
+      description: 说明为什么这个来源可靠，是否有历史准确性、透明模型或稳定更新。
+    validations:
+      required: true
